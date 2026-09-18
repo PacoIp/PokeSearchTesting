@@ -33,14 +33,16 @@
         .type-fairy { background: #EE99AC; color: #333; }
         .type-dark { background: #705848; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif; }
+        
+        /* 圓形寶可夢球背景圖騰 */
         body {
             background-color: #0c1429;
             color: var(--text-main);
             min-height: 100vh;
             padding: 20px;
             background-image: 
-                radial-gradient(circle at 50% 50%, rgba(12, 20, 41, 0.65), rgba(4, 7, 18, 0.92)),
-                url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.45'%3E%3Cpath d='M50 5 A45 45 0 0 1 95 50 L68 50 A18 18 0 0 0 32 50 L5 50 A45 45 0 0 1 5 5 Z' fill='%23FF1E1E'/%3E%3Cpath d='M50 95 A45 45 0 0 1 5 50 L32 50 A18 18 0 0 0 68 50 L95 50 A45 45 0 0 1 50 95 Z' fill='%23FFFFFF'/%3E%3Cpath d='M5 45 L32 45 A18 18 0 0 1 68 45 L95 45 L95 55 L68 55 A18 18 0 0 1 32 55 L5 55 Z' fill='%23000000'/%3E%3Ccircle cx='50' cy='50' r='12' fill='%23FFFFFF' stroke='%23000000' stroke-width='4'/%3E%3C/g%3E%3C/svg%3E");
+                radial-gradient(circle at 50% 50%, rgba(12, 20, 41, 0.75), rgba(4, 7, 18, 0.95)),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='120' height='120'%3E%3Cg opacity='0.12'%3E%3Ccircle cx='50' cy='50' r='42' fill='none' stroke='%23FFFFFF' stroke-width='8'/%3E%3Cline x1='8' y1='50' x2='92' y2='50' stroke='%23FFFFFF' stroke-width='8'/%3E%3Ccircle cx='50' cy='50' r='14' fill='%230c1429' stroke='%23FFFFFF' stroke-width='8'/%3E%3C/g%3E%3C/svg%3E");
             background-repeat: repeat;
             background-attachment: fixed;
         }
@@ -186,10 +188,10 @@
             border: 1px solid rgba(239, 68, 68, 0.5); padding: 2px 8px; border-radius: 8px;
         }
 
+        /* 取消內建滾動條，全面攤開展示 */
         .move-list-box {
             background: rgba(0, 0, 0, 0.3); border-radius: 12px;
-            padding: 12px; max-height: 260px; overflow-y: auto;
-            display: flex; flex-direction: column; gap: 8px;
+            padding: 12px; display: flex; flex-direction: column; gap: 8px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .move-item {
@@ -308,7 +310,7 @@
                     <span class="tab-label">形態選擇：</span>
                     <div id="m-forms-container" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
                 </div>
-                <!-- 3. 內容選擇 (新增 3 個按鈕) -->
+                <!-- 3. 內容選擇 -->
                 <div class="tab-row">
                     <span class="tab-label">內容選擇：</span>
                     <button class="form-tab-btn active" id="btn-tab-info" onclick="switchContentTab('info')">基本資料</button>
@@ -338,17 +340,17 @@
                 </div>
             </div>
 
-            <!-- 分頁 2：特性 (中文) -->
+            <!-- 分頁 2：中文特性 -->
             <div id="section-abilities" class="content-panel">
                 <div id="m-abilities" class="ability-list">載入特性中...</div>
             </div>
 
-            <!-- 分頁 3：等級招式 (中文) -->
+            <!-- 分頁 3：中文等級招式 (全面攤開) -->
             <div id="section-moves" class="content-panel">
                 <div id="m-moves" class="move-list-box">載入招式中...</div>
             </div>
 
-            <!-- 進化鏈 (保持在下方) -->
+            <!-- 進化鏈 -->
             <div class="evolution-section">
                 <div class="evolution-title"><i class="fa-solid fa-diagram-project"></i> 進化樹 (Evolution Chain)</div>
                 <div class="evolution-chain-wrapper" id="evolution-chain-container">
@@ -577,7 +579,6 @@
             grid.innerHTML = htmlContent;
         }
 
-        // 切換 Modal 內的內容分頁 (基本資料 / 特性 / 等級招式)
         function switchContentTab(tab) {
             ['info', 'abilities', 'moves'].forEach(t => {
                 document.getElementById(`btn-tab-${t}`).classList.remove('active');
@@ -594,7 +595,6 @@
             isShinyMode = false;
             currentFormIndex = 0;
             
-            // 重置分頁至「基本資料」
             switchContentTab('info');
             document.getElementById('btn-color-normal').classList.add('active');
             document.getElementById('btn-color-shiny').classList.remove('active');
@@ -657,11 +657,9 @@
                 const speciesRes = await fetch(data.species.url);
                 const speciesData = await speciesRes.json();
 
-                // 載入中文特性與等級招式
                 renderAbilities(data.abilities);
                 renderMoves(data.moves);
 
-                // 形態切換邏輯
                 currentVarietiesData = [];
                 const costumeKeywords = ['starter', 'cap', 'cosplay', 'rock-star', 'belle', 'pop-star', 'phd', 'libre'];
                 const varieties = (speciesData.varieties || []).filter(v => {
@@ -701,7 +699,6 @@
                     formsRow.style.display = 'none';
                 }
 
-                // 載入進化鏈
                 const evoRes = await fetch(speciesData.evolution_chain.url);
                 const evoData = await evoRes.json();
                 renderEvolutionChain(evoData.chain);
@@ -711,7 +708,7 @@
             }
         }
 
-        // 渲染中文特性
+        // 解析中文特性
         async function renderAbilities(abilities) {
             const container = document.getElementById('m-abilities');
             container.innerHTML = '<div style="color: var(--text-sub); font-size: 13px;">載入中文特性中...</div>';
@@ -735,7 +732,7 @@
             }
         }
 
-        // 渲染中文等級招式
+        // 解析中文等級招式 (完全攤開)
         async function renderMoves(moves) {
             const container = document.getElementById('m-moves');
             container.innerHTML = '<div style="color: var(--text-sub); font-size: 13px;">載入中文等級招式中...</div>';
@@ -753,15 +750,14 @@
             });
 
             levelUpMoves.sort((a, b) => a.level - b.level);
-            const targetMoves = levelUpMoves.slice(0, 25);
 
-            if (targetMoves.length === 0) {
+            if (levelUpMoves.length === 0) {
                 container.innerHTML = '<div style="color: var(--text-sub); font-size: 13px;">無等級提升招式</div>';
                 return;
             }
 
             try {
-                const promises = targetMoves.map(async (m) => {
+                const promises = levelUpMoves.map(async (m) => {
                     const res = await fetch(m.url);
                     const mData = await res.json();
                     const zhObj = mData.names.find(n => n.language.name === 'zh-Hant') || mData.names.find(n => n.language.name === 'zh-Hans');
