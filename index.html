@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>寶可夢圖鑒</title>
+    <title>寶可夢圖鑒 - 紅白經典版</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --poke-red: #EF4444;
-            --bg-color: #0A1128;
-            --card-bg: #101D36;
-            --card-border: rgba(56, 189, 248, 0.25);
+            --poke-red: #DC2626;
+            --poke-white: #F8FAFC;
+            --card-bg: rgba(15, 23, 42, 0.88);
+            --card-border: rgba(255, 255, 255, 0.2);
             --text-main: #F8FAFC;
             --text-sub: #94A3B8;
         }
@@ -32,35 +32,51 @@
         .type-steel { background: #B8B8D0; color: #333; }
         .type-fairy { background: #EE99AC; color: #333; }
         .type-dark { background: #705848; }
+        
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif; }
         
-        /* 圓形寶可夢球背景圖騰 */
+        /* 經典精靈球紅白雙色分割背景 */
         body {
-            background-color: #0c1429;
+            background: linear-gradient(180deg, #B91C1C 0%, #EF4444 46%, #111827 46%, #111827 54%, #E2E8F0 54%, #F8FAFC 100%);
+            background-attachment: fixed;
             color: var(--text-main);
             min-height: 100vh;
             padding: 20px;
-            background-image: 
-                radial-gradient(circle at 50% 50%, rgba(12, 20, 41, 0.75), rgba(4, 7, 18, 0.95)),
-                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='120' height='120'%3E%3Cg opacity='0.12'%3E%3Ccircle cx='50' cy='50' r='42' fill='none' stroke='%23FFFFFF' stroke-width='8'/%3E%3Cline x1='8' y1='50' x2='92' y2='50' stroke='%23FFFFFF' stroke-width='8'/%3E%3Ccircle cx='50' cy='50' r='14' fill='%230c1429' stroke='%23FFFFFF' stroke-width='8'/%3E%3C/g%3E%3C/svg%3E");
-            background-repeat: repeat;
-            background-attachment: fixed;
+            position: relative;
         }
+
+        /* 背景中央精靈球圖案裝飾 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            height: 320px;
+            border: 24px solid #111827;
+            border-radius: 50%;
+            background: #F8FAFC;
+            box-shadow: inset 0 0 0 16px #111827, 0 0 40px rgba(0, 0, 0, 0.4);
+            z-index: -1;
+            opacity: 0.85;
+        }
+
         header { text-align: center; margin-bottom: 25px; }
         header h1 {
             font-size: 2.5rem;
             color: #FFCB05;
-            text-shadow: 0px 4px 12px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 203, 5, 0.5);
+            text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.6);
             display: flex; align-items: center; justify-content: center; gap: 14px;
         }
         .container { max-width: 1400px; margin: 0 auto; }
         .search-box-card {
-            background: rgba(16, 29, 54, 0.92);
+            background: rgba(15, 23, 42, 0.92);
             backdrop-filter: blur(16px);
             border: 1px solid var(--card-border);
             border-radius: 20px;
             padding: 20px 25px;
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
             margin-bottom: 25px;
         }
         .category-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
@@ -99,7 +115,7 @@
         }
         .btn-reset:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4); }
         .sub-panel {
-            background: rgba(11, 19, 41, 0.95); border: 1px dashed rgba(56, 189, 248, 0.35);
+            background: rgba(15, 23, 42, 0.95); border: 1px dashed rgba(56, 189, 248, 0.35);
             border-radius: 12px; padding: 14px 18px; margin-top: 15px; display: none; flex-wrap: wrap; gap: 10px; animation: fadeIn 0.2s ease-in-out;
         }
         .sub-panel.active { display: flex; }
@@ -111,13 +127,13 @@
         }
         .filter-tag.negative { background: linear-gradient(135deg, #EF4444, #B91C1C); }
         .filter-tag .remove-btn { cursor: pointer; background: rgba(0,0,0,0.25); border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 11px; }
-        .results-info { margin-bottom: 15px; color: var(--text-sub); font-size: 15px; display: flex; justify-content: space-between; font-weight: bold; }
+        .results-info { margin-bottom: 15px; color: #1E293B; font-size: 15px; display: flex; justify-content: space-between; font-weight: bold; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
         .pokemon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 20px; }
         .pokemon-card {
-            background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 18px; text-align: center; position: relative; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+            background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 18px; text-align: center; position: relative; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.3); backdrop-filter: blur(10px);
         }
-        .pokemon-card:hover { transform: translateY(-6px) scale(1.02); border-color: rgba(56, 189, 248, 0.6); box-shadow: 0 12px 25px rgba(0, 0, 0, 0.6), 0 0 15px rgba(56, 189, 248, 0.25); }
-        .card-id { position: absolute; top: 12px; left: 14px; font-size: 12px; font-weight: bold; color: var(--text-sub); background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 10px; }
+        .pokemon-card:hover { transform: translateY(-6px) scale(1.02); border-color: rgba(56, 189, 248, 0.6); box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(56, 189, 248, 0.25); }
+        .card-id { position: absolute; top: 12px; left: 14px; font-size: 12px; font-weight: bold; color: var(--text-sub); background: rgba(0,0,0,0.5); padding: 2px 8px; border-radius: 10px; }
         .card-img { width: 110px; height: 110px; object-fit: contain; margin: 10px 0; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
         .card-title { font-size: 1.15rem; font-weight: bold; color: #FFF; margin-bottom: 2px; }
         .card-en-name { font-size: 0.85rem; color: var(--text-sub); margin-bottom: 10px; }
@@ -134,10 +150,10 @@
         }
         .modal-overlay.active { display: flex; }
         .modal-content {
-            background: #101D36; border: 1px solid var(--card-border);
+            background: #0F172A; border: 1px solid var(--card-border);
             width: 90%; max-width: 800px; max-height: 90vh; border-radius: 24px;
             padding: 25px; overflow-y: auto; position: relative; color: white;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
         }
         .close-modal {
             position: absolute; top: 20px; right: 20px; font-size: 18px; cursor: pointer;
@@ -187,7 +203,6 @@
             border: 1px solid rgba(239, 68, 68, 0.5); padding: 2px 8px; border-radius: 8px;
         }
 
-        /* 攤開展現招式，絕不捲動 */
         .move-list-box {
             background: rgba(0, 0, 0, 0.3); border-radius: 12px;
             padding: 12px; display: flex; flex-direction: column; gap: 8px;
@@ -202,7 +217,7 @@
         .evolution-section { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
         .evolution-title { font-size: 1.1rem; font-weight: bold; color: #38BDF8; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
         .evolution-chain-wrapper {
-            background: rgba(11, 19, 41, 0.6); padding: 20px; border-radius: 16px;
+            background: rgba(15, 23, 42, 0.6); padding: 20px; border-radius: 16px;
             overflow-x: auto; display: flex; justify-content: center; align-items: center; min-height: 120px;
         }
         .evo-tree { display: flex; align-items: center; gap: 12px; }
@@ -217,14 +232,14 @@
         .evo-id { font-size: 11px; color: var(--text-sub); }
         .evo-arrow { color: #38BDF8; font-size: 14px; opacity: 0.8; }
         .evo-children { display: flex; flex-direction: column; gap: 12px; }
-        .no-result { grid-column: 1 / -1; text-align: center; padding: 50px; color: var(--text-sub); font-size: 1.2rem; }
+        .no-result { grid-column: 1 / -1; text-align: center; padding: 50px; color: #FFF; font-size: 1.2rem; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="fa-solid fa-gamepad" style="color:#EF4444;"></i> 寶可夢圖鑒</h1>
+            <h1><i class="fa-solid fa-gamepad" style="color:#FFF;"></i> 寶可夢圖鑒</h1>
         </header>
         <div class="search-box-card">
             <div class="category-bar">
@@ -303,10 +318,6 @@
                     <button class="form-tab-btn active" id="btn-color-normal" onclick="switchColorMode(false)">普通</button>
                     <button class="form-tab-btn" id="btn-color-shiny" onclick="switchColorMode(true)">Shiny</button>
                 </div>
-                <div class="tab-row" id="forms-row-container" style="display: none;">
-                    <span class="tab-label">形態選擇：</span>
-                    <div id="m-forms-container" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
-                </div>
                 <div class="tab-row">
                     <span class="tab-label">內容選擇：</span>
                     <button class="form-tab-btn active" id="btn-tab-info" onclick="switchContentTab('info')">基本資料</button>
@@ -336,12 +347,12 @@
                 </div>
             </div>
 
-            <!-- 分頁 2：特性 (中文) -->
+            <!-- 分頁 2：特性 (完整中文) -->
             <div id="section-abilities" class="content-panel">
                 <div id="m-abilities" class="ability-list">載入特性中...</div>
             </div>
 
-            <!-- 分頁 3：等級招式 (中文且完全攤開) -->
+            <!-- 分頁 3：等級招式 (完整中文) -->
             <div id="section-moves" class="content-panel">
                 <div id="m-moves" class="move-list-box">載入招式中...</div>
             </div>
@@ -360,25 +371,37 @@
         const typeDict = { '草':'grass', '毒':'poison', '火':'fire', '飛行':'flying', '水':'water', '蟲':'bug', '一般':'normal', '電':'electric', '地面':'ground', '岩石':'rock', '妖精':'fairy', '格鬥':'fighting', '超能力':'psychic', '冰':'ice', '幽靈':'ghost', '龍':'dragon', '惡':'dark', '鋼':'steel' };
         const typeZhDict = { 'grass':'草', 'poison':'毒', 'fire':'火', 'flying':'飛行', 'water':'水', 'bug':'蟲', 'normal':'一般', 'electric':'電', 'ground':'地面', 'rock':'岩石', 'fairy':'妖精', 'fighting':'格鬥', 'psychic':'超能力', 'ice':'冰', 'ghost':'幽靈', 'dragon':'龍', 'dark':'惡', 'steel':'鋼' };
 
-        // 內建常用中文特性對照字典（確保立即呈現中文）
+        // 擴充常見特性中文字典（含即時動態 API 補全）
         const abilityZhDict = {
             'overgrow': '茂盛', 'chlorophyll': '葉綠素', 'blaze': '猛火', 'solar-power': '太陽力量',
             'torrent': '激流', 'rain-dish': '雨盤', 'shield-dust': '鱗粉', 'run-away': '逃跑',
             'shed-skin': '脫皮', 'compound-eyes': '複眼', 'tinted-lens': '色眼鏡', 'swarm': '蟲之預感',
             'keen-eye': '銳利目光', 'tangled-feet': '千鳥足', 'big-pecks': '健壯胸肌', 'guts': '毅力',
             'intimidate': '威嚇', 'static': '靜電', 'lightning-rod': '避雷針', 'sand-veil': '沙隱',
-            'sand-rush': '撥沙', 'poison-point': '毒針', 'rivalry': '鬥爭心', 'cute-charm': '魅惑之軀'
+            'sand-rush': '撥沙', 'poison-point': '毒針', 'rivalry': '鬥爭心', 'cute-charm': '魅惑之軀',
+            'inner-focus': '精神力', 'infiltrator': '穿透', 'thick-fat': '厚脂肪', 'pickup': '撿拾',
+            'technician': '技術高手', 'speed-boost': '加速', 'levitate': '飄浮', 'pressure': '壓迫感'
         };
 
-        // 內建常用中文招式對照字典（確保立即呈現中文）
+        // 擴充常見招式中文字典（含即時動態 API 補全）
         const moveZhDict = {
             'tackle': '撞擊', 'growl': '叫聲', 'leech-seed': '寄生種子', 'vine-whip': '藤鞭',
             'take-down': '猛撞', 'poison-powder': '毒粉', 'sweet-scent': '甜甜香氣', 'double-edge': '捨身衝撞',
             'razor-leaf': '飛葉快刀', 'worry-seed': '煩惱種子', 'power-whip': '強力鞭打', 'growth': '生長',
             'seed-bomb': '種子炸彈', 'synthesis': '光合作用', 'sleep-powder': '催眠粉', 'solar-beam': '日光束',
-            'scratch': '抓', 'ember': '火花', 'flamethrower': '大字爆炎', 'water-gun': '水槍',
-            'hydro-pump': '幫浦水砲', 'surf': '衝浪', 'thunderbolt': '十萬伏特', 'thunder': '雷電',
-            'quick-attack': '電光一閃', 'bite': '咬住', 'hyper-beam': '破壞光線'
+            'scratch': '抓', 'ember': '火花', 'flamethrower': '噴射火焰', 'fire-blast': '大字爆炎',
+            'water-gun': '水槍', 'hydro-pump': '水砲', 'surf': '衝浪', 'thunderbolt': '十萬伏特',
+            'thunder': '雷電', 'quick-attack': '電光一閃', 'bite': '咬住', 'hyper-beam': '破壞光線',
+            'slash': '劈開', 'dragon-claw': '龍爪', 'earthquake': '地震', 'psychic': '精神強念',
+            'shadow-ball': '影子球', 'sludge-bomb': '污泥炸彈', 'ice-beam': '冰凍光束', 'blizzard': '暴風雪',
+            'iron-tail': '鐵尾', 'close-combat': '近身戰', 'stone-edge': '尖石攻擊', 'giga-drain': '超級吸取',
+            'energy-ball': '能量球', 'calm-mind': '冥想', 'swords-dance': '劍舞', 'toxic': '劇毒',
+            'protect': '守住', 'substitute': '替身', 'rest': '睡覺', 'reflect': '反射壁',
+            'light-screen': '光牆', 'stun-spore': '麻痺粉', 'fire-spin': '火焰旋渦', 'dragon-rage': '龍之怒',
+            'fire-fang': '火焰牙', 'inferno': '煉獄', 'flare-blitz': '閃焰衝鋒', 'withdraw': '縮入殼中',
+            'bubble': '泡沫', 'water-pulse': '水之波動', 'rain-dance': '求雨', 'aqua-tail': '水之尾',
+            'skull-bash': '火箭頭槌', 'hydro-cannon': '加農水砲', 'string-shot': '吐絲', 'bug-bite': '蟲咬',
+            'harden': '變硬', 'confusion': '念力', 'psybeam': '幻象光線', 'body-slam': '壓制', 'headbutt': '頭錘'
         };
 
         const megaIds = [3, 6, 9, 15, 18, 65, 80, 94, 115, 127, 130, 142, 150, 181, 208, 212, 214, 229, 248, 254, 257, 260, 282, 302, 303, 306, 308, 310, 319, 323, 334, 354, 359, 362, 373, 376, 380, 381, 384, 428, 445, 448, 460, 475, 531, 719];
@@ -387,11 +410,9 @@
         let allPokemon = [];
         let activeFilters = [];
         let isNegateMode = false;
-        let currentVarietiesData = [];
         let currentPokemonId = 1;
         let currentBaseZhName = "";
         let isShinyMode = false;
-        let currentFormIndex = 0;
 
         function initData() {
             for (let id = 1; id <= 1025; id++) {
@@ -601,15 +622,12 @@
             currentPokemonId = p.id;
             currentBaseZhName = p.nameZh;
             isShinyMode = false;
-            currentFormIndex = 0;
             
             switchContentTab('info');
             document.getElementById('btn-color-normal').classList.add('active');
             document.getElementById('btn-color-shiny').classList.remove('active');
 
             const modal = document.getElementById('detail-modal');
-            document.getElementById('m-forms-container').innerHTML = '';
-            document.getElementById('forms-row-container').style.display = 'none';
             updateArtworkImage();
             document.getElementById('m-title').innerText = p.nameZh;
             document.getElementById('m-en-title').innerText = `${p.nameEn} (#${p.id})`;
@@ -620,7 +638,7 @@
             document.getElementById('m-types').innerHTML = p.types.map(t => `<span class="type-badge type-${t}">${typeZhDict[t] || t}</span>`).join('');
             
             modal.classList.add('active');
-            fetchPokemonDetails(p.id, p.nameZh);
+            fetchPokemonDetails(p.id);
         }
 
         function switchColorMode(isShiny) {
@@ -632,10 +650,10 @@
                 document.getElementById('btn-color-normal').classList.add('active');
                 document.getElementById('btn-color-shiny').classList.remove('active');
             }
-            switchForm(currentFormIndex, currentBaseZhName);
+            updateArtworkImage();
         }
 
-        async function fetchPokemonDetails(id, baseZhName) {
+        async function fetchPokemonDetails(id) {
             const evoContainer = document.getElementById('evolution-chain-container');
             evoContainer.innerHTML = `<div style="color: var(--text-sub);">載入進化鏈中...</div>`;
             
@@ -660,10 +678,10 @@
             }
         }
 
-        // 核心解析中文特性（優先從本地字典快速讀取）
+        // 解析與中文補全特性
         async function renderAbilities(abilities) {
             const container = document.getElementById('m-abilities');
-            container.innerHTML = '';
+            container.innerHTML = '<div style="color:var(--text-sub);">特性載入中...</div>';
             
             const promises = abilities.map(async (a) => {
                 const rawName = a.ability.name.toLowerCase();
@@ -674,13 +692,16 @@
                         const res = await fetch(a.ability.url);
                         const aData = await res.json();
                         const zhObj = aData.names.find(n => n.language.name === 'zh-Hant') || aData.names.find(n => n.language.name === 'zh-Hans');
-                        if (zhObj) zhName = zhObj.name;
+                        if (zhObj) {
+                            zhName = zhObj.name;
+                            abilityZhDict[rawName] = zhName;
+                        }
                     } catch (e) {}
                 }
                 
                 return `
                     <div class="ability-item">
-                        <span>${zhName || a.ability.name}</span>
+                        <span>${zhName || rawName}</span>
                         ${a.is_hidden ? '<span class="hidden-badge">隱藏特性</span>' : ''}
                     </div>
                 `;
@@ -690,10 +711,10 @@
             container.innerHTML = htmlList.join('');
         }
 
-        // 核心解析中文招式（攤開且優先採用中文字典對照）
+        // 解析與中文補全招式
         async function renderMoves(moves) {
             const container = document.getElementById('m-moves');
-            container.innerHTML = '';
+            container.innerHTML = '<div style="color:var(--text-sub);">招式列表載入中...</div>';
             
             const levelUpMoves = [];
             moves.forEach(m => {
@@ -724,7 +745,10 @@
                     type = mData.type.name;
                     if (!zhName) {
                         const zhObj = mData.names.find(n => n.language.name === 'zh-Hant') || mData.names.find(n => n.language.name === 'zh-Hans');
-                        if (zhObj) zhName = zhObj.name;
+                        if (zhObj) {
+                            zhName = zhObj.name;
+                            moveZhDict[m.nameRaw] = zhName; // 快取翻譯
+                        }
                     }
                 } catch (e) {}
 
