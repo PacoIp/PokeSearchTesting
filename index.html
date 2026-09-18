@@ -165,7 +165,6 @@
         .modal-header img { width: 140px; height: 140px; object-fit: contain; transition: all 0.3s ease; }
         .modal-header .type-badges { justify-content: flex-start; min-height: 28px; align-items: center; margin-bottom: 0; }
         
-        /* 內容切換分頁面板 */
         .content-panel { display: none; }
         .content-panel.active { display: block; animation: fadeIn 0.2s ease-in-out; }
 
@@ -188,17 +187,17 @@
             border: 1px solid rgba(239, 68, 68, 0.5); padding: 2px 8px; border-radius: 8px;
         }
 
-        /* 取消內建滾動條，全面攤開展示 */
+        /* 攤開展現招式，絕不捲動 */
         .move-list-box {
             background: rgba(0, 0, 0, 0.3); border-radius: 12px;
             padding: 12px; display: flex; flex-direction: column; gap: 8px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .move-item {
-            display: flex; align-items: center; gap: 12px; font-size: 13px;
-            background: rgba(255, 255, 255, 0.04); padding: 8px 12px; border-radius: 8px;
+            display: flex; align-items: center; gap: 12px; font-size: 14px;
+            background: rgba(255, 255, 255, 0.04); padding: 10px 14px; border-radius: 8px;
         }
-        .move-level { color: #FCD34D; font-weight: bold; min-width: 50px; }
+        .move-level { color: #FCD34D; font-weight: bold; min-width: 55px; }
         
         .evolution-section { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
         .evolution-title { font-size: 1.1rem; font-weight: bold; color: #38BDF8; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
@@ -299,18 +298,15 @@
             <div class="close-modal" onclick="hideModal()"><i class="fa-solid fa-xmark"></i></div>
             
             <div class="control-group">
-                <!-- 1. 配色分類 -->
                 <div class="tab-row">
                     <span class="tab-label">配色分類：</span>
                     <button class="form-tab-btn active" id="btn-color-normal" onclick="switchColorMode(false)">普通</button>
                     <button class="form-tab-btn" id="btn-color-shiny" onclick="switchColorMode(true)">Shiny</button>
                 </div>
-                <!-- 2. 形態選擇 -->
                 <div class="tab-row" id="forms-row-container" style="display: none;">
                     <span class="tab-label">形態選擇：</span>
                     <div id="m-forms-container" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
                 </div>
-                <!-- 3. 內容選擇 -->
                 <div class="tab-row">
                     <span class="tab-label">內容選擇：</span>
                     <button class="form-tab-btn active" id="btn-tab-info" onclick="switchContentTab('info')">基本資料</button>
@@ -340,12 +336,12 @@
                 </div>
             </div>
 
-            <!-- 分頁 2：中文特性 -->
+            <!-- 分頁 2：特性 (中文) -->
             <div id="section-abilities" class="content-panel">
                 <div id="m-abilities" class="ability-list">載入特性中...</div>
             </div>
 
-            <!-- 分頁 3：中文等級招式 (全面攤開) -->
+            <!-- 分頁 3：等級招式 (中文且完全攤開) -->
             <div id="section-moves" class="content-panel">
                 <div id="m-moves" class="move-list-box">載入招式中...</div>
             </div>
@@ -363,16 +359,28 @@
     <script>
         const typeDict = { '草':'grass', '毒':'poison', '火':'fire', '飛行':'flying', '水':'water', '蟲':'bug', '一般':'normal', '電':'electric', '地面':'ground', '岩石':'rock', '妖精':'fairy', '格鬥':'fighting', '超能力':'psychic', '冰':'ice', '幽靈':'ghost', '龍':'dragon', '惡':'dark', '鋼':'steel' };
         const typeZhDict = { 'grass':'草', 'poison':'毒', 'fire':'火', 'flying':'飛行', 'water':'水', 'bug':'蟲', 'normal':'一般', 'electric':'電', 'ground':'地面', 'rock':'岩石', 'fairy':'妖精', 'fighting':'格鬥', 'psychic':'超能力', 'ice':'冰', 'ghost':'幽靈', 'dragon':'龍', 'dark':'惡', 'steel':'鋼' };
-        
-        const formTranslationDict = {
-            'alola': '阿羅拉', 'galar': '伽勒爾', 'hisui': '洗翠', 'paldea': '帕底亞',
-            'paldea-combat-breed': '帕底亞 (鬥戰種)', 'paldea-blaze-breed': '帕底亞 (炎驅種)', 'paldea-aqua-breed': '帕底亞 (水驅種)',
-            'origin': '起源形態', 'sky': '天空形態', 'therian': '靈獸形態', 'incarnate': '化身形態',
-            'crowned': '王冠形態', 'dusk': '黃昏形態', 'dawn': '拂曉形態', 'midnight': '黑夜形態',
-            'midday': '白晝形態', 'unbound': '解放形態', 'ordinary': '平時形態', 'resolute': '覺悟形態',
-            'female': '雌性', 'male': '雄性', 'attack': '攻擊形態', 'defense': '防禦形態',
-            'speed': '速度形態', 'heat': '加熱', 'wash': '清洗', 'frost': '結冰', 'fan': '旋轉', 'mow': '切割', 'bloodmoon': '赫月'
+
+        // 內建常用中文特性對照字典（確保立即呈現中文）
+        const abilityZhDict = {
+            'overgrow': '茂盛', 'chlorophyll': '葉綠素', 'blaze': '猛火', 'solar-power': '太陽力量',
+            'torrent': '激流', 'rain-dish': '雨盤', 'shield-dust': '鱗粉', 'run-away': '逃跑',
+            'shed-skin': '脫皮', 'compound-eyes': '複眼', 'tinted-lens': '色眼鏡', 'swarm': '蟲之預感',
+            'keen-eye': '銳利目光', 'tangled-feet': '千鳥足', 'big-pecks': '健壯胸肌', 'guts': '毅力',
+            'intimidate': '威嚇', 'static': '靜電', 'lightning-rod': '避雷針', 'sand-veil': '沙隱',
+            'sand-rush': '撥沙', 'poison-point': '毒針', 'rivalry': '鬥爭心', 'cute-charm': '魅惑之軀'
         };
+
+        // 內建常用中文招式對照字典（確保立即呈現中文）
+        const moveZhDict = {
+            'tackle': '撞擊', 'growl': '叫聲', 'leech-seed': '寄生種子', 'vine-whip': '藤鞭',
+            'take-down': '猛撞', 'poison-powder': '毒粉', 'sweet-scent': '甜甜香氣', 'double-edge': '捨身衝撞',
+            'razor-leaf': '飛葉快刀', 'worry-seed': '煩惱種子', 'power-whip': '強力鞭打', 'growth': '生長',
+            'seed-bomb': '種子炸彈', 'synthesis': '光合作用', 'sleep-powder': '催眠粉', 'solar-beam': '日光束',
+            'scratch': '抓', 'ember': '火花', 'flamethrower': '大字爆炎', 'water-gun': '水槍',
+            'hydro-pump': '幫浦水砲', 'surf': '衝浪', 'thunderbolt': '十萬伏特', 'thunder': '雷電',
+            'quick-attack': '電光一閃', 'bite': '咬住', 'hyper-beam': '破壞光線'
+        };
+
         const megaIds = [3, 6, 9, 15, 18, 65, 80, 94, 115, 127, 130, 142, 150, 181, 208, 212, 214, 229, 248, 254, 257, 260, 282, 302, 303, 306, 308, 310, 319, 323, 334, 354, 359, 362, 373, 376, 380, 381, 384, 428, 445, 448, 460, 475, 531, 719];
         const gmaxIds = [3, 6, 9, 12, 25, 52, 68, 94, 99, 131, 133, 143, 569, 809, 812, 815, 818, 823, 826, 834, 838, 841, 842, 844, 849, 851, 858, 861, 869, 879, 884, 892];
         
@@ -598,9 +606,6 @@
             switchContentTab('info');
             document.getElementById('btn-color-normal').classList.add('active');
             document.getElementById('btn-color-shiny').classList.remove('active');
-            
-            document.getElementById('m-abilities').innerHTML = '載入中文特性中...';
-            document.getElementById('m-moves').innerHTML = '載入中文等級招式中...';
 
             const modal = document.getElementById('detail-modal');
             document.getElementById('m-forms-container').innerHTML = '';
@@ -630,22 +635,8 @@
             switchForm(currentFormIndex, currentBaseZhName);
         }
 
-        function getTranslatedFormLabel(vName, rawDataName) {
-            if (vName.includes('-mega-x')) return 'Mega X';
-            if (vName.includes('-mega-y')) return 'Mega Y';
-            if (vName.includes('-mega-z')) return 'Mega Z';
-            if (vName.includes('-mega')) return 'Mega';
-            if (vName.includes('-gmax')) return '超極巨化';
-            if (vName.includes('-primal')) return '原始回歸';
-            const suffix = vName.replace(rawDataName + '-', '').toLowerCase();
-            if (formTranslationDict[suffix]) return formTranslationDict[suffix];
-            return suffix.toUpperCase();
-        }
-
         async function fetchPokemonDetails(id, baseZhName) {
             const evoContainer = document.getElementById('evolution-chain-container');
-            const formsRow = document.getElementById('forms-row-container');
-            const formsContainer = document.getElementById('m-forms-container');
             evoContainer.innerHTML = `<div style="color: var(--text-sub);">載入進化鏈中...</div>`;
             
             try {
@@ -654,50 +645,11 @@
                 document.getElementById('m-height').innerText = `${data.height / 10} m`;
                 document.getElementById('m-weight').innerText = `${data.weight / 10} kg`;
                 
-                const speciesRes = await fetch(data.species.url);
-                const speciesData = await speciesRes.json();
-
                 renderAbilities(data.abilities);
                 renderMoves(data.moves);
 
-                currentVarietiesData = [];
-                const costumeKeywords = ['starter', 'cap', 'cosplay', 'rock-star', 'belle', 'pop-star', 'phd', 'libre'];
-                const varieties = (speciesData.varieties || []).filter(v => {
-                    const name = v.pokemon.name.toLowerCase();
-                    return !costumeKeywords.some(keyword => name.includes(keyword));
-                });
-                
-                if (varieties.length > 1) {
-                    formsRow.style.display = 'flex';
-                    let buttonsHtml = '';
-                    for (let i = 0; i < varieties.length; i++) {
-                        const v = varieties[i];
-                        const vName = v.pokemon.name;
-                        let label = '一般';
-                        
-                        if (!v.is_default) {
-                            label = getTranslatedFormLabel(vName, data.name);
-                        }
-                        
-                        buttonsHtml += `
-                            <button class="form-tab-btn ${v.is_default ? 'active' : ''}" id="form-btn-${i}" onclick="switchForm(${i}, '${baseZhName}')">
-                                ${label}
-                            </button>
-                        `;
-                        currentVarietiesData.push({
-                            index: i,
-                            label: label,
-                            url: v.pokemon.url,
-                            isDefault: v.is_default,
-                            defaultTypes: data.types.map(t => t.type.name),
-                            defaultHeight: data.height / 10,
-                            defaultWeight: data.weight / 10
-                        });
-                    }
-                    formsContainer.innerHTML = buttonsHtml;
-                } else {
-                    formsRow.style.display = 'none';
-                }
+                const speciesRes = await fetch(data.species.url);
+                const speciesData = await speciesRes.json();
 
                 const evoRes = await fetch(speciesData.evolution_chain.url);
                 const evoData = await evoRes.json();
@@ -708,41 +660,47 @@
             }
         }
 
-        // 解析中文特性
+        // 核心解析中文特性（優先從本地字典快速讀取）
         async function renderAbilities(abilities) {
             const container = document.getElementById('m-abilities');
-            container.innerHTML = '<div style="color: var(--text-sub); font-size: 13px;">載入中文特性中...</div>';
-            try {
-                const promises = abilities.map(async (a) => {
-                    const res = await fetch(a.ability.url);
-                    const aData = await res.json();
-                    const zhObj = aData.names.find(n => n.language.name === 'zh-Hant') || aData.names.find(n => n.language.name === 'zh-Hans');
-                    const name = zhObj ? zhObj.name : a.ability.name;
-                    return `
-                        <div class="ability-item">
-                            <span>${name}</span>
-                            ${a.is_hidden ? '<span class="hidden-badge">隱藏特性</span>' : ''}
-                        </div>
-                    `;
-                });
-                const htmlList = await Promise.all(promises);
-                container.innerHTML = htmlList.join('');
-            } catch (err) {
-                container.innerHTML = '<div style="color: var(--text-sub); font-size: 13px;">特性載入失敗</div>';
-            }
+            container.innerHTML = '';
+            
+            const promises = abilities.map(async (a) => {
+                const rawName = a.ability.name.toLowerCase();
+                let zhName = abilityZhDict[rawName];
+                
+                if (!zhName) {
+                    try {
+                        const res = await fetch(a.ability.url);
+                        const aData = await res.json();
+                        const zhObj = aData.names.find(n => n.language.name === 'zh-Hant') || aData.names.find(n => n.language.name === 'zh-Hans');
+                        if (zhObj) zhName = zhObj.name;
+                    } catch (e) {}
+                }
+                
+                return `
+                    <div class="ability-item">
+                        <span>${zhName || a.ability.name}</span>
+                        ${a.is_hidden ? '<span class="hidden-badge">隱藏特性</span>' : ''}
+                    </div>
+                `;
+            });
+
+            const htmlList = await Promise.all(promises);
+            container.innerHTML = htmlList.join('');
         }
 
-        // 解析中文等級招式 (完全攤開)
+        // 核心解析中文招式（攤開且優先採用中文字典對照）
         async function renderMoves(moves) {
             const container = document.getElementById('m-moves');
-            container.innerHTML = '<div style="color: var(--text-sub); font-size: 13px;">載入中文等級招式中...</div>';
+            container.innerHTML = '';
             
             const levelUpMoves = [];
             moves.forEach(m => {
                 const lvlDetail = m.version_group_details.find(v => v.move_learn_method.name === 'level-up');
                 if (lvlDetail) {
                     levelUpMoves.push({
-                        nameEn: m.move.name,
+                        nameRaw: m.move.name.toLowerCase(),
                         url: m.move.url,
                         level: lvlDetail.level_learned_at
                     });
@@ -756,95 +714,37 @@
                 return;
             }
 
-            try {
-                const promises = levelUpMoves.map(async (m) => {
+            const promises = levelUpMoves.map(async (m) => {
+                let zhName = moveZhDict[m.nameRaw];
+                let type = 'normal';
+
+                try {
                     const res = await fetch(m.url);
                     const mData = await res.json();
-                    const zhObj = mData.names.find(n => n.language.name === 'zh-Hant') || mData.names.find(n => n.language.name === 'zh-Hans');
-                    const name = zhObj ? zhObj.name : m.nameEn;
-                    const type = mData.type.name;
-                    return `
-                        <div class="move-item">
-                            <span class="move-level">Lv. ${m.level}</span>
-                            <span class="type-badge type-${type}" style="font-size:10px; padding:2px 6px;">${typeZhDict[type] || type}</span>
-                            <span style="color:#FFF; font-weight: bold;">${name}</span>
-                        </div>
-                    `;
-                });
-                const htmlList = await Promise.all(promises);
-                container.innerHTML = htmlList.join('');
-            } catch (err) {
-                container.innerHTML = '<div style="color: var(--text-sub); font-size: 13px;">招式載入失敗</div>';
-            }
-        }
+                    type = mData.type.name;
+                    if (!zhName) {
+                        const zhObj = mData.names.find(n => n.language.name === 'zh-Hant') || mData.names.find(n => n.language.name === 'zh-Hans');
+                        if (zhObj) zhName = zhObj.name;
+                    }
+                } catch (e) {}
 
-        async function switchForm(varietyIndex, baseZhName) {
-            currentFormIndex = varietyIndex;
-            document.querySelectorAll('#m-forms-container .form-tab-btn').forEach(btn => btn.classList.remove('active'));
-            const activeBtn = document.getElementById(`form-btn-${varietyIndex}`);
-            if (activeBtn) activeBtn.classList.add('active');
-            
-            const item = currentVarietiesData.find(v => v.index === varietyIndex);
-            
-            if (!item || item.isDefault) {
-                document.getElementById('m-title').innerText = isShinyMode ? `${baseZhName} (Shiny)` : baseZhName;
-                updateArtworkImage();
-                if (item) {
-                    document.getElementById('m-height').innerText = `${item.defaultHeight} m`;
-                    document.getElementById('m-weight').innerText = `${item.defaultWeight} kg`;
-                    document.getElementById('m-types').innerHTML = item.defaultTypes.map(t => `<span class="type-badge type-${t}">${typeZhDict[t] || t}</span>`).join('');
-                }
-                return;
-            }
-            
-            document.getElementById('m-title').innerText = isShinyMode ? `${baseZhName} (${item.label} - Shiny)` : `${baseZhName} (${item.label})`;
-            const imgEl = document.getElementById('m-img');
-            imgEl.style.opacity = '0.3';
-            
-            try {
-                const res = await fetch(item.url);
-                const data = await res.json();
-                
-                let targetUrl = '';
-                if (isShinyMode) {
-                    targetUrl = data.sprites?.other['official-artwork']?.front_shiny ||
-                                data.sprites?.other['home']?.front_shiny ||
-                                data.sprites?.front_shiny;
-                } else {
-                    targetUrl = data.sprites?.other['official-artwork']?.front_default ||
-                                data.sprites?.other['home']?.front_default ||
-                                data.sprites?.front_default;
-                }
-                imgEl.src = targetUrl;
-                
-                document.getElementById('m-height').innerText = `${data.height / 10} m`;
-                document.getElementById('m-weight').innerText = `${data.weight / 10} kg`;
-                const types = data.types.map(t => t.type.name);
-                document.getElementById('m-types').innerHTML = types.map(t => `<span class="type-badge type-${t}">${typeZhDict[t] || t}</span>`).join('');
-                
-                renderAbilities(data.abilities);
-                renderMoves(data.moves);
-            } catch (err) {}
-            imgEl.style.opacity = '1';
+                return `
+                    <div class="move-item">
+                        <span class="move-level">Lv. ${m.level}</span>
+                        <span class="type-badge type-${type}">${typeZhDict[type] || type}</span>
+                        <span style="color:#FFF; font-weight: bold;">${zhName || m.nameRaw}</span>
+                    </div>
+                `;
+            });
+
+            const htmlList = await Promise.all(promises);
+            container.innerHTML = htmlList.join('');
         }
 
         function updateArtworkImage() {
             const imgEl = document.getElementById('m-img');
             const baseUrl = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/';
-            const homeUrl = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/';
-            if (isShinyMode) {
-                imgEl.src = `${baseUrl}shiny/${currentPokemonId}.png`;
-                imgEl.onerror = () => {
-                    imgEl.src = `${homeUrl}shiny/${currentPokemonId}.png`;
-                    imgEl.onerror = null;
-                };
-            } else {
-                imgEl.src = `${baseUrl}${currentPokemonId}.png`;
-                imgEl.onerror = () => {
-                    imgEl.src = `${homeUrl}${currentPokemonId}.png`;
-                    imgEl.onerror = null;
-                };
-            }
+            imgEl.src = isShinyMode ? `${baseUrl}shiny/${currentPokemonId}.png` : `${baseUrl}${currentPokemonId}.png`;
         }
 
         function renderEvolutionChain(chainNode) {
@@ -865,24 +765,14 @@
             const img = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokeId}.png`;
             const nodeHtml = `
                 <div class="evo-node" onclick="openDetailModal(${pokeId})" title="點擊切換至 ${zhName}">
-                    <img src="${img}" alt="${zhName}" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/0.png'">
+                    <img src="${img}" alt="${zhName}">
                     <div class="evo-name">${zhName}</div>
                     <div class="evo-id">#${String(pokeId).padStart(4, '0')}</div>
                 </div>
             `;
-            if (!node.evolves_to || node.evolves_to.length === 0) {
-                return `<div class="evo-branch">${nodeHtml}</div>`;
-            }
+            if (!node.evolves_to || node.evolves_to.length === 0) return `<div class="evo-branch">${nodeHtml}</div>`;
             const childrenHtml = node.evolves_to.map(child => buildEvoHtml(child)).join('');
-            return `
-                <div class="evo-branch">
-                    ${nodeHtml}
-                    <div class="evo-arrow"><i class="fa-solid fa-chevron-right"></i></div>
-                    <div class="evo-children">
-                        ${childrenHtml}
-                    </div>
-                </div>
-            `;
+            return `<div class="evo-branch">${nodeHtml}<div class="evo-arrow"><i class="fa-solid fa-chevron-right"></i></div><div class="evo-children">${childrenHtml}</div></div>`;
         }
 
         function hideModal() { document.getElementById('detail-modal').classList.remove('active'); }
